@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Bodleian Secure Reading Room</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+      }
+
+      #mirador {
+        position: absolute;
+        inset: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="mirador"></div>
+    <script src="./mirador.min.js"></script>
+    <script>
+      // Books are opened from ?manifest=<url>[,<url>...], e.g.
+      //   /?manifest=https://iiif.bodleian.ox.ac.uk/iiif/manifest/<id>.json
+      // With no parameter a Bodleian item is shown as a default.
+      const DEFAULT_MANIFESTS = [
+        'https://iiif.bodleian.ox.ac.uk/iiif/manifest/e4dc07a6-3ec8-414a-aa92-2e9815f93276.json',
+      ];
+
+      const requested = (new URLSearchParams(window.location.search).get('manifest') || '')
+        .split(',')
+        .map((id) => id.trim())
+        .filter(Boolean);
+
+      const manifestIds = requested.length ? requested : DEFAULT_MANIFESTS;
+
+      Mirador.viewer({
+        id: 'mirador',
+        windows: manifestIds.map((manifestId) => ({ manifestId })),
+        workspace: {
+          showZoomControls: true,
+        },
+        window: {
+          allowClose: manifestIds.length > 1,
+        },
+      });
+    </script>
+  </body>
+</html>
